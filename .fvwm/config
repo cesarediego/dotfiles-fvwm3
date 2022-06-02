@@ -1,0 +1,459 @@
+#===========================================================
+#╭━━━╮          ╭━━━╮
+#┃╭━━╯          ┃╭━╮┃
+#┃╰━━┳╮╭┳╮╭╮╭┳╮╭╋╯╭╯┃
+#┃╭━━┫╰╯┃╰╯╰╯┃╰╯┣╮╰╮┃
+#┃┃  ╰╮╭┻╮╭╮╭┫┃┃┃╰━╯┃
+#╰╯   ╰╯ ╰╯╰╯╰┻┻┻━━━╯
+# Modificado por : Diego Cesare <diegocesare300491@gmail.com>
+# Primeira modificação em : dom 28 nov 2021
+#===========================================================
+
+Key u A 4 Module FvwmButtons power
+
+# Ignore Numlock and other modifiers for bindings
+# See http://fvwm.org/documentation/faq/#why-do-numlock-capslock-and-scrolllock-interfere-with-clicktofocus-andor-my-mouse-bindings
+IgnoreModifiers L25
+
+############################################################
+# █▀▄▀█ █▀█ █▀▄ █░█ █░░ █▀▀ █▀
+# █░▀░█ █▄█ █▄▀ █▄█ █▄▄ ██▄ ▄█
+############################################################
+# A maioria das configurações estao neste arquivo
+PipeRead 'sh ~/.fvwm/config.sh'
+# Diretorio para as miniaturas
+# Widgets
+PipeRead 'sh ~/.fvwm/widgets.sh'
+SetEnv cache $[HOME]/.fvwm/cache/
+# Diretorio para os scripts
+SetEnv scripts $[HOME]/.fvwm/scripts
+# Diretorio com os icones, consulte lua/window.lua para ver as opçoes
+SetEnv icons $[HOME]/.fvwm/icons/titlebar/$[infostore.Buttonstyle]
+SetEnv dock $[HOME]/.fvwm/icons/dock
+SetEnv power $[HOME]/.fvwm/icons/power
+
+##PipeRead 'sh ~/.fvwm/scripts/Settings.sh'
+
+############################################################
+# ▄▀█ █░█ ▀█▀ █▀█ █▀ ▀█▀ ▄▀█ █▀█ ▀█▀
+# █▀█ █▄█ ░█░ █▄█ ▄█ ░█░ █▀█ █▀▄ ░█░
+############################################################
+
+# Programas e funções que irao iniciar a cada vez que o Fvwm for reestartado
+DestroyFunc StartFunction
+AddToFunc   StartFunction
++ I Module FvwmAuto FvwmAutohide -menter enter_handler
++ I Module FvwmMFL
++ I Module FvwmEvent FE-FC
++ I Module FvwmEvent FE-aw
++ I Module FvwmPerl perlwops
++ I PipeRead `echo Module FvwmMFL`
+
++ I FvwmAnimate
+
++ I Module FvwmButtons dock
+
++ I Module FvwmForm Search
++ I Module FvwmScript $[scripts]/DateTime
+
+# Programas e funções que irao iniciar junto com o sistema uma unica vez
+DestroyFunc InitFunction
+AddToFunc InitFunction
++ I Module FvwmAuto 300
++ I Module FvwmGtk
++ I Module FvwmCommandS
++ I Module FvwmMFL
++ I Exec exec sh ~/.fvwm/scripts/autostart &
+
+###################################################
+# █▀▄▀█ █▀▀ █▄░█ █░█ █▀
+# █░▀░█ ██▄ █░▀█ █▄█ ▄█
+###################################################
+# Window Operations Menus
+DestroyMenu MenuWindowOps
+AddToMenu   MenuWindowOps
++ "$[gt.Move]"      Move
++ "$[gt.Resize]"    Resize
++ "$[gt.(De)Iconify]"   Iconify
++ "$[gt.(Un)Maximize]"  Maximize
++ "$[gt.(Un)Shade]"     WindowShade
++ "$[gt.(Un)Stick]"     Stick
++ "" Nop
++ "$[gt.Close]"     Close
++ "$[gt.More]..."   Menu MenuWindowOpsLong This 0 0
+
+DestroyMenu MenuWindowOpsLong
+AddToMenu   MenuWindowOpsLong "$[gt.Window Ops]" Title
++ "$[gt.Move]%icons/win/move.png%" Move
++ "$[gt.Resize]%icons/win/resize.png%" Resize
++ "$[gt.(De)Iconify]%icons/win/iconify.png%" Iconify
++ "$[gt.(Un)Maximize]%icons/win/max.png%" Maximize
++ "$[gt.(Un)Shade]%icons/win/shade.png%" WindowShade
++ "$[gt.(Un)Sticky]%icons/win/sticky.png%" Stick
++ "$[gt.(No)Title Bar]%icons/win/title.png%" Pick (CirculateHit) ToggleTitle
++ "$[gt.Send To]%icons/win/sendto.png%" Popup MenuSendTo
++ "" Nop
++ "$[gt.Close]%icons/win/close.png%" Close
++ "$[gt.Destroy]%icons/win/destroy.png%" Destroy
++ "" Nop
++ "$[gt.Raise]%icons/win/raise.png%" Raise
++ "$[gt.Lower]%icons/win/lower.png%" Lower
++ "" Nop
++ "$[gt.Stays On Top]%icons/win/top.png%" Pick (CirculateHit) Layer 0 6
++ "$[gt.Stays Put]%icons/win/stays.png%" Pick (CirculateHit) Layer 0 4
++ "$[gt.Stays On Bottom]%icons/win/bottom.png%" Pick (CirculateHit) Layer 0 2
++ "" Nop
++ "$[gt.Identify]%icons/info.png%" Module FvwmIdent
+
+###################################################
+# █▀ ▀█▀ █▄█ █░░ █▀▀
+# ▄█ ░█░ ░█░ █▄▄ ██▄
+###################################################
+SetAnimation  10  -.01 0 .01 .03 .08 .18 .3 .45 .6 .75 .85 .90 .94 .97 .99 1.0
+
+Emulate Mwm
+HideGeometryWindow never
+
+# Clock Style
+Style "FvwmScript" !Title, !Borders, !Handles, Sticky, NeverFocus, \
+FixedPosition, FixedSize, Iconifiable, StaysOnBottom
+
+# Menus
+MenuStyle * MenuColorset $[infostore.Base]
+MenuStyle * ActiveColorset $[infostore.Highlight]
+MenuStyle * GreyedColorset $[infostore.Inactive]
+MenuStyle * TitleColorset $[infostore.Base]
+
+MenuStyle * Hilight3DOff, HilightBack, HilightTitleBack,  SeparatorsLong, Hilight3DThickness +10, PopupDelay 300, PopupOffset 5
+MenuStyle * VerticalItemSpacing 2 2, VerticalMargins 2 2
+MenuStyle * TrianglesSolid, TrianglesUseFore
+MenuStyle * ItemFormat "%|%3.1i%5.3l%5l%5r%5.3>%|"
+MenuStyle * Font "xft:$[infostore.DefaultFonte]:size=$[infostore.FonteSize]:antialias=True"
+MenuStyle * BorderWidth 2
+
+Style * WindowShadeSteps
+
+# Sets the focus style to SloppyFocus and a mouse click
+# in a window will Raise it.
+Style * SloppyFocus, MouseFocusClickRaises
+Style * !HideGeometryWindow
+
+# Default Font
+DefaultFont "xft:$[infostore.DefaultFonte]:size=$[infostore.FonteSize]:antialias=True"
+
+# Window Placement
+Style * !MinOverlapPlacement, !GrabFocusOff, UsePPosition, !PositionPlacement Center
+
+# Sets all windows to OpaqueMove (vs a wired frame) and  windows will
+# snap to each other and the edge of the screen.
+OpaqueMoveSize unlimited
+Style * ResizeOpaque, SnapAttraction 0 SameType ScreenAll, SnapGrid
+
+# Transient Windows (such as open file windows)
+Style * DecorateTransient, StackTransientParent
+Style * FPGrabFocusTransient, FPReleaseFocusTransient
+
+# WindowShade
+Style * WindowShadeScrolls, WindowShadeSteps 100
+
+# Disable Icons from appearing on desktop.
+# Comment this out or use Style * Icon to get the icons back.
+
+#EdgeLeaveCommand Top Next All Thumbnail
+Key w A 4 All Thumbnail
+
+Style "Eww - bar" !Title, !Borders, Handles, Sticky, \
+  WindowListSkip, NeverFocus, !Closable, \
+  !Maximizable, StaysOnBottom, FixedPosition, \
+  FixedSize, Iconifiable, \
+  !MouseFocusClickRaises, Layer 10 10, State 4, \
+  CirculateSkip \
+
+Style "polybar" !Title, !Borders, Handles, Sticky
+  WindowListSkip, NeverFocus, !Closable, \
+  !Maximizable, StaysOnBottom, FixedPosition, \
+  FixedSize, Iconifiable, \
+  !MouseFocusClickRaises, Layer 10 10, State 4, \
+  CirculateSkip \
+
+# Cursors
+  CursorStyle ROOT left_ptr
+  CursorStyle TITLE left_ptr
+  CursorStyle DEFAULT left_ptr
+  CursorStyle SYS left_ptr
+  CursorStyle MENU left_ptr
+  CursorStyle WAIT left_ptr
+  BusyCursor  DynamicMenu True, Read True, Wait True
+
+# Window Decor
+Style * TitleFormat %c
+Style * $[infostore.TitlePosition]
+TitleStyle $[infostore.WindowName] -- flat
+TitleStyle Height $[infostore.TitleSize] -- flat
+
+TitleStyle AllActive   Colorset  $[infostore.Active] -- flat
+TitleStyle AllInactive Colorset  $[infostore.Inactive] -- flat
+
+Style * BorderWidth $[infostore.BorderSize], \
+        HandleWidth $[infostore.BorderSize], \
+
+BorderStyle Inactive -- HiddenHandles NoInset
+BorderStyle Active -- HiddenHandles NoInset
+
+Style * Colorset $[infostore.Inactive], HilightColorset $[infostore.Active]
+
+Style * BorderColorset $[infostore.BorderInactive], \
+        HilightBorderColorset $[infostore.BorderActive]
+
+Style * MwmBorder, FirmBorder, Handles
+Style * MWMButtons
+Style * MWMDecor, MWMFunctions
+
+###################################################
+# █▀▀ █░█ █▄░█ █▀▀ ▀█▀ █ █▀█ █▄░█ █▀
+# █▀░ █▄█ █░▀█ █▄▄ ░█░ █ █▄█ █░▀█ ▄█
+################################################### 
+# FVWM animation (Frame, Lines, Flip, Turn, Zoom3D, Twist Random)
+*FvwmAnimate: Effect Flip
+*FvwmAnimate: Width 10
+*FvwmAnimate: Delay 5
+*FvwmAnimate: Iterations 50
+
+DestroyFunc RaiseMoveX
+AddToFunc RaiseMoveX
++ I Raise
++ M $0
++ D $1
+
+DestroyFunc RaiseMove
+AddToFunc RaiseMove
++ I Raise
++ M $0
+
+DestroyFunc MoveToCurrent
+AddToFunc MoveToCurrent
++ I ThisWindow MoveToPage
++ I ThisWindow MoveToDesk
+
+# Function
+AddToFunc FocusRaiseAndStuff
++ I Iconify on
++ I Focus
++ I Raise
+
+# It will minimize the open window in thumbnail format on the right side of the screen.
+DestroyFunc Thumbnail
+AddToFunc Thumbnail
+
++ I ThisWindow (Shaded) WindowShade
++ I PipeRead 'bash $[scripts]/crthumb "$[w.id]" "$[cache]"'
+
+DestroyFunc DeThumbnail
+AddToFunc DeThumbnail
++ I PipeRead 'bash $[scripts]/dethumb "$[w.id]" "$[cache]"'
+*FvwmEvent: deiconify DeThumbnail
+
+Style * IconBox 1100x0+300+65, IconGrid 5 5, Colorset $[infostore.Base], \
+IconFill top left, !IconTitle, IconBackgroundRelief 2
+
+Key z A 4 Thumbnail
+
+# Esta função pode auto recolher um programa
+#   => Janelas
+#   => Barras
+#   => Widgets
+
+DestroyFunc autohide
+AddToFunc autohide
++ I ThisWindow ($0) Deschedule $[w.id]
++ I ThisWindow ($0) ThisWindow (Shaded) WindowShade off
++ I TestRc (!Match) All ($0, !Shaded) autohide\_hide $1 $2
+
+DestroyFunc autohide_hide
+AddToFunc autohide_hide
++ I Schedule $0 $[w.id] WindowShade $1
++ I Schedule $0 $[w.id] Deschedule $[w.id]
+
+DestroyFunc enter_handler
+AddToFunc enter_handler
++ I autohide "dock" 2500 S
+#            ^           ^   ^
+#            |           |   |___  Direção
+#            |           |_______  Tempo (milisegundos)
+#            |___________________  Nome do programa
+
+# EdgeScroll will move the view port between the Pages when the mouse
+# moves to the edge of the screen. This set the amount of distance to
+# scroll at 100% (full page) and the EdgeResistance which is a timer
+# for how long the mouse as at the edge before it scrolls.
+# Set EdgeScroll 0 0 and/or EdgeResistance -1 to disable.
+
+EdgeScroll 0 0
+EdgeResistance 4
+EdgeThickness 1
+Style * EdgeMoveDelay 500, EdgeMoveResistance 100
+
+# This sets the ClickTime and MoveThreshold used to determine
+# Double Clicks, Hold and Move for the mouse.
+ClickTime 250
+MoveThreshold 3
+
+SetEnv DIR Next
+
+AddToFunc FocusRaiseAndStuff
++ I Iconify off
++ I Focus
++ I Raise
+
+AddToFunc SwitchWindow
++ I $[DIR] (CurrentPage, !Iconic, !Sticky) FocusRaiseAndStuff 
++ I Deschedule 134000
++ I PipeRead `[ "$[DIR]" == "Prev" ] && \
+    echo 'SetEnv NDIR Next' || \
+    echo 'SetEnv NDIR Prev'`
++ I Schedule 700 134000 SetEnv DIR $[NDIR]
+
+Key Tab A 4 SwitchWindow
+
+DestroyFunc ToggleTitle
+AddToFunc   ToggleTitle
++ I ThisWindow (State 1) WindowStyle Title
++ I TestRc (Match) State 1 False
++ I TestRc (Match) Break
++ I WindowStyle !Title
++ I State 1 True
+
+###################################################################
+# █▄▄ █░█ ▀█▀ ▀█▀ █▀█ █▄░█ █▀
+# █▄█ █▄█ ░█░ ░█░ █▄█ █░▀█ ▄█
+###################################################################
+# Contexts:
+#     R = Root Window                 rrrrrrrrrrrrrrrrrrrrrr
+#     W = Application Window          rIrrrr<---------^rrrrr
+#     F = Frame Corners               rrrrrr[13TTTT642]rrrrr
+#     S = Frame Sides                 rIrrrr[wwwwwwwww]rrrrr
+#     T = Title Bar                   rrrrrr[wwwwwwwww]rrrrr
+#     I = Icon                        rIrrrrv_________>rrrrr
+#                                     rrrrrrrrrrrrrrrrrrrrrr
+#
+# Numbers are buttons: [1 3 5 7 9  TTTTT  0 8 6 4 2]
+# Modifiers: (A)ny, (C)ontrol, (S)hift, (M)eta, (N)othing
+# Format: Key <X>  <Context> <Modifier> <Action>
+#         Mouse <X> <Context> <Modifier> <Action>
+###################################################################
+ButtonStyle Reset
+ButtonStyle All Inactive Colorset $[infostore.Base] -- Flat
+ButtonStyle All Active Colorset $[infostore.Base] -- Flat
+ButtonStyle All -- UseTitleStyle
+AddButtonStyle All Vector 2 0x70@4 0x70@4
+
+AddButtonStyle $[infostore.button1] \
+  ActiveUp (Pixmap $[icons]/1.svg$[infostore.ButtonSize] -- Flat) \
+  ActiveDown (Pixmap $[icons]/01.svg$[infostore.ButtonSize] -- Flat) \
+  Inactive (Pixmap $[icons]/01.svg$[infostore.ButtonSize] -- Flat) \
+
+AddButtonStyle $[infostore.button2] \
+  ActiveUp (Pixmap $[icons]/2.svg$[infostore.ButtonSize] -- Flat) \
+  ActiveDown (Pixmap $[icons]/02.svg$[infostore.ButtonSize] -- Flat) \
+  Inactive (Pixmap $[icons]/02.svg$[infostore.ButtonSize] -- Flat)
+
+AddButtonStyle $[infostore.button3] \
+  ActiveUp (Pixmap $[icons]/3.svg$[infostore.ButtonSize] -- Flat) \
+  ActiveDown (Pixmap $[icons]/03.svg$[infostore.ButtonSize] -- Flat) \
+  Inactive (Pixmap $[icons]/03.svg$[infostore.ButtonSize] -- Flat) \
+
+#AddButtonStyle $[infostore.button4] \
+#  ActiveUp (Pixmap $[icons]/4.svg$[infostore.ButtonSize] -- Flat) \
+# ActiveDown (Pixmap $[icons]/04.svg$[infostore.ButtonSize] -- Flat) \
+#  Inactive (Pixmap $[icons]/04.svg$[infostore.ButtonSize] -- Flat) \
+
+#AddButtonStyle $[infostore.button5] \
+#  ActiveUp (Pixmap $[icons]/5.svg$[infostore.ButtonSize] -- Flat) \
+#  ActiveDown (Pixmap $[icons]/05.svg$[infostore.ButtonSize] -- Flat) \
+#  Inactive (Pixmap $[icons]/05.svg$[infostore.ButtonSize] -- Flat) \
+
+ButtonStyle 1 - Clear MWMDecorMenu
+ButtonStyle 2 - Clear MWMDecorMax
+ButtonStyle 4 - Clear MWMDecorMin
+
+###################################################
+# █▀▄▀█ █▀█ █░█ █▀ █▀▀
+# █░▀░█ █▄█ █▄█ ▄█ ██▄
+###################################################
+Mouse 1 I A Iconify off
+
+Mouse 1 $[infostore.button1] A Close
+Mouse 1 $[infostore.button2] A Maximize
+Mouse 1 $[infostore.button3] A Thumbnail
+#Mouse 1 $[infostore.button4] A WindowShade
+#Mouse 1 $[infostore.button5] A Menu MenuWindowOps
+
+Mouse 3 T A Menu MenuWindowOps
+
+Mouse 1 A 4 RaiseMoveX Move
+Mouse 3 A 4 RaiseMove Resize
+Mouse 4 T A WindowShade True
+Mouse 5 T A WindowShade False
+
+Mouse 1 R A Nop
+Mouse 3 R A Exec exec jgmenu_run
+
+
+###################################################
+# █░█░█ █ █▀▄ █▀▀ █▀▀ ▀█▀ █▀
+# ▀▄▀▄▀ █ █▄▀ █▄█ ██▄ ░█░ ▄█
+###################################################
+
+*dock: BoxSize fixed
+*dock: Colorset $[infostore.Widget]
+*dock: ActiveColorset 5
+*dock: Columns 412
+*dock: Frame 0
+*dock: Geometry 550x70+510+826
+*dock: Rows 0
+*dock: Padding 0 0
+
+*dock(60x20+0+0, Icon $[dock]/editor.svg:50x50-0-0, ActiveIcon $[dock]/editor.svg:45x45-0-0,\
+Action(Mouse1) Exec subl, Action(Mouse3) Next (subl) Iconify )
+
+*dock(60x20+60+0, Icon $[dock]/facebook.svg:50x50-0-0, ActiveIcon $[dock]/facebook.svg:45x45-0-0, \
+Action Exec xdg-open https://facebook.com, Action(Mouse3) Next (google-chrome) Iconify )
+
+*dock(60x20+120+0, Icon $[dock]/spotify.svg:50x50-0-0, ActiveIcon $[dock]/spotify.svg:45x45-0-0, \
+Action(Mouse1) Exec spotify, Action(Mouse3) Next (spotify) Iconify)
+
+*dock(60x20+180+0, Icon $[dock]/telegram.svg:50x50-0-0, ActiveIcon $[dock]/telegram.svg:45x45-0-0, \
+Action(Mouse1) Exec telegram-desktop, Action(Mouse3) Next (telegram-desktop) Iconify)
+
+*dock(60x20+240+0, Icon $[dock]/youtube.svg:50x50-0-0, ActiveIcon $[dock]/youtube.svg:45x45-0-0, \
+Action(Mouse1) Exec xdg-open https://youtube.com, Action(Mouse3) Next (google-chrome) Iconify)
+
+*dock(60x20+300+0, Icon $[dock]/themes.svg:50x50-0-0, ActiveIcon $[dock]/themes.svg:45x45-0-0, \
+Action(Mouse1) Exec lxappearance, Action(Mouse3) Next (lxappearance) Iconify)
+
+*dock(60x20+360+0, Icon $[dock]/wallpaper.svg:50x50-0-0, ActiveIcon $[dock]/wallpaper.svg:45x45-0-0, \
+Action(Mouse1) Exec nitrogen, Action(Mouse3) Next (nitrogen) Iconify)
+
+Style "dock" !Title, !Borders, !Handles, Sticky, StaysOnTop, NeverFocus
+
+*power: BoxSize smart
+*power: Font "xft:Sans:Bold:size=40:antialias=True"
+*power: Colorset $[infostore.Transparent]
+*power: ActiveColorset 1
+*power: Columns 400
+*power: Frame 10
+*power: Geometry 1600x900+0+0
+*power: Rows 0
+*power: Padding 0 0
+
+*power(500x500+40+40, Container(Rows 200 Columns 400)
+*power(70x180+0+0, Title PowerOff, Colorset 2, Icon $[power]/power.svg:150x150-0-0, ActiveIcon $[power]/power.svg:150x150-0-0,\
+Action(Mouse1) Exec shutdown now
+*power(70x180+100+0, Title Reboot, Colorset 3, Icon $[power]/reboot.svg:150x150-0-0, ActiveIcon $[power]/reboot.svg:150x150-0-0,\
+Action(Mouse1) Exec reboot
+*power(70x180+200+0, Title LogOut, Colorset 4, Icon $[power]/logout.svg:150x150-0-0, ActiveIcon $[power]/logout.svg:150x150-0-0,\
+Action(Mouse1) Exec pkill -u -9 $USER
+*power(70x180+300+0, Title Lock, Colorset 5, Icon $[power]/lock.svg:150x150-0-0, ActiveIcon $[power]/lock.svg:150x150-0-0,\
+Action(Mouse1) Exec i3-lock)
+
+Style power !Title, !Borders, !FPEnterToFocus, !NeverFocus, Closable, Sticky, Handles, !Iconifiable, StaysOnTop
